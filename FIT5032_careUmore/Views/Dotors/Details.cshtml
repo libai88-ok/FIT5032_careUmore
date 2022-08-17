@@ -1,0 +1,68 @@
+﻿@model FIT5032_careUmore.Models.Dotor
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Doctor</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WorkYears)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WorkYears)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Locations)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Locations)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Position)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Position)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AvailabilityDate)
+        </dt>
+
+        <dd>
+            @{ string datet = item.AvailabilityDate.ToString("yyyy-MM-dd");}
+            @Html.DisplayFor(modelItem => datet)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

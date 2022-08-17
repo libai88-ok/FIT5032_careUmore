@@ -1,0 +1,140 @@
+﻿@model FIT5032_careUmore.Models.Dotor
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js"></script>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+
+
+<h2>Detail</h2>
+
+<div id="map" style="height:400px"></div>
+
+<div>
+    <h4>Please contact with doctor via email to get precise location. :-D </h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WorkYears)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WorkYears)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Locations)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Locations)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Position)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Position)
+        </dd>    
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to Index", "Pindex")
+</p>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiendhbjAzNDQiLCJhIjoiY2w2b2dmbW54MDI3ODNqcG03eXN4cjhtYiJ9.g0F_Z7tk5UN7mZ60SE6SoQ';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-79.4512, 43.6568],
+        zoom: 8
+    });
+
+    /* Given a query in the form "lng, lat" or "lat, lng"
+    * returns the matching geographic coordinate(s)
+    * as search results in carmen geojson format,
+    * https://github.com/mapbox/carmen/blob/master/carmen-geojson.md */
+    const coordinatesGeocoder = function (query) {
+        // Match anything which looks like
+        // decimal degrees coordinate pair.
+        const matches = query.match(
+            /^[ ]*(?:Lat: )?(-?\d+\.?\d*)[, ]+(?:Lng: )?(-?\d+\.?\d*)[ ]*$/i
+        );
+        if (!matches) {
+            return null;
+        }
+
+        function coordinateFeature(lng, lat) {
+            return {
+                center: [lng, lat],
+                geometry: {
+                    type: 'Point',
+                    coordinates: [lng, lat]
+                },
+                place_name: 'Lat: ' + lat + ' Lng: ' + lng,
+                place_type: ['coordinate'],
+                properties: {},
+                type: 'Feature'
+            };
+        }
+
+        const coord1 = Number(matches[1]);
+        const coord2 = Number(matches[2]);
+        const geocodes = [];
+
+        if (coord1 < -90 || coord1 > 90) {
+            // must be lng, lat
+            geocodes.push(coordinateFeature(coord1, coord2));
+        }
+
+        if (coord2 < -90 || coord2 > 90) {
+            // must be lat, lng
+            geocodes.push(coordinateFeature(coord2, coord1));
+        }
+
+        if (geocodes.length === 0) {
+            // else could be either lng, lat or lat, lng
+            geocodes.push(coordinateFeature(coord1, coord2));
+            geocodes.push(coordinateFeature(coord2, coord1));
+        }
+
+        return geocodes;
+    };
+
+    // Add the control to the map.
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            localGeocoder: coordinatesGeocoder,
+            zoom: 4,
+            placeholder: 'Try: -40, 170',
+            mapboxgl: mapboxgl,
+            reverseGeocode: true
+        })
+    );
+</script>
+
